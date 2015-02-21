@@ -6,7 +6,7 @@
 #include "CompilerFunctionLibrary.generated.h"
 
 /**
- * @author Carl
+ * @author Carl Stephen Tan
  */
 
 /*Enum type for the different types of commands accepted.*/

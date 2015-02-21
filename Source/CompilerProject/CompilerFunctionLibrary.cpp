@@ -7,6 +7,7 @@
 #include "regex"
 
 
+
 UCompilerFunctionLibrary::UCompilerFunctionLibrary(const class FObjectInitializer& OI)
 :Super(OI)
 {
@@ -35,25 +36,38 @@ ECommandsEnum UCompilerFunctionLibrary::ParseCommand(FString Command){
 	else if (std::regex_search(CommandString, match, std::regex("^moveright(\\(\\))$")) && match.size() > 1){
 		return ECommandsEnum::CE_MoveRight;
 	}
-	else if (std::regex_search(CommandString, match, std::regex("^fire(\\(\\d.*\\,\\d.*\\))$")) && match.size() > 1){
+	//check if fire(col,row)
+	else if (std::regex_search(CommandString, match, std::regex("^fire(\\(\\s*\\d+\\s*\\,\\s*\\d+\\s*\\))$")) && match.size() > 1){
 		return ECommandsEnum::CE_Fire;
 	}
+	//invalid command input
 	else{
 		return ECommandsEnum::CE_InvalidCommand;
 	}
-	//FRegexPattern MoveUpPattern = FRegexPattern("//d");
-	//FRegexMatcher matcher = FRegexMatcher(MoveUpPattern, Command);
-	//if (matcher.FindNext())
-	//	return ECommandsEnum::CE_MoveUp;
-	//else
-	//	return ECommandsEnum::CE_InvalidCommand;
 }
 
 /*Gets the firing coordinates specified in the Fire command*/
 FCoordinates UCompilerFunctionLibrary::GetFiringCoordinates(FString Command){
 	FCoordinates coords;
-	coords.x = 1;
-	coords.y = 1;
+	std::string CommandString(TCHAR_TO_UTF8(*Command));
+	std::_Bool flag = true;
+
+	std::regex re("(\\d+)");
+
+	for (std::sregex_iterator i = std::sregex_iterator(CommandString.begin(), CommandString.end(), re);
+		i != std::sregex_iterator();
+		++i)
+	{
+		std::smatch match = *i;
+		if (flag){
+			coords.x = std::stoi(match.str());
+			flag = false;
+		}
+		else{
+			coords.y = std::stoi(match.str());
+		}
+	}
+
 
 	return coords;
 }
